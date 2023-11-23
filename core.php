@@ -4,8 +4,6 @@ const ROOT = __DIR__;
 
 define("MAINTENANCE_MODE", require(ROOT . "/maintenance.php"));
 
-require_once(ROOT . "/utils/arrays.php");
-
 if (MAINTENANCE_MODE) {
     require(ROOT . "./templates/maintenance.php");
 } else {

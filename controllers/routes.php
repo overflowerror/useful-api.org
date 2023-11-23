@@ -10,5 +10,6 @@ function fromController(string $path) {
 
 return function(Router $router) {
     $router->addRoute(GET, "/", fromController("/GET"));
-    $router->addRoute(GET, "/test", useRenderer(fromController("/test/GET"), "JSON"));
+    $router->addRoute(GET, "/test", useRenderer(fromController("/test/GET")));
+    $router->addRoute(GET, "/ipaddress", useRenderer(fromController("/ipaddress/GET")));
 };

@@ -1,5 +1,7 @@
 <?php
 
+require_once(ROOT . "/utils/arrays.php");
+
 const GET = "GET";
 const POST = "POST";
 const PUT = "PUT";
