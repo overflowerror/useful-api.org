@@ -1,0 +1,40 @@
+name: 'Publish to prod'
+
+on:
+  push:
+    branches:
+      - "main"
+
+permissions:
+  id-token: write
+  contents: read
+
+
+jobs:
+  upload-prod:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - uses: 'actions/checkout@v3'
+      - name: Upload
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sudo apt install lftp
+          rm -rf .git .github
+          mv maintenance.php maintenance-real.php
+          sed -e 's/false/true/g' maintenance-real.php > maintenance.php
+          lftp -e "
+            set sftp:auto-confirm yes;
+            set ssl:verify-certificate no;
+            open -u ${FTP_USERNAME},${FTP_PASSWORD} sftp://${FTP_SERVER};
+            put maintenance.php -o maintenance.php;
+            mirror --exclude=maintenance-real.php -e -R ./ ./;
+            put maintenance-real.php -o maintenance.php;
+            quit;
+          "
