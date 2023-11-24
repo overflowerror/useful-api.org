@@ -52,9 +52,7 @@ class Router {
         array_get_or_add($method, $this->routes, [])[$path] = $handler;
     }
 
-    public function execute() {
-        //var_dump($this->routes);
-
+    public function execute($context = []) {
         $path = $this->getPath($_SERVER["REQUEST_URI"]);
         $route = $this->findRoute($_SERVER["REQUEST_METHOD"], $path);
 
@@ -62,11 +60,14 @@ class Router {
             $route = $this->notFoundHandler;
         }
 
-        $context = [
-          "REQUEST_PATH" => $path,
-        ];
+        $context["REQUEST_PATH"] = $path;
 
-        $route($context);
+        return $route($context);
+    }
+
+    // calling magic to make the router a handler and thus cascade-able
+    public function __call(string $name, array $arguments) {
+        return $this->execute($arguments[0] ?? []);
     }
 }
 

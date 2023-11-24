@@ -94,25 +94,22 @@ function whoisDomain(string $domain) {
 }
 
 return function (array $context) {
-    $result = null;
-
     if (key_exists("ip", $_GET)) {
         $ip = $_GET["ip"];
+
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             setStatusCode(400);
-            $result = errorResponse("Invalid IP address", "Please provide a valid IP address.");
+            return errorResponse("Invalid IP address", "Please provide a valid IP address.");
         } else {
-            $result = whoisIp($ip);
+            return whoisIp($ip);
         }
     } elseif (key_exists("domain", $_GET)) {
         $domain = $_GET["domain"];
 
-        $result = whoisDomain($domain);
+        return whoisDomain($domain);
     } else {
         setStatusCode(400);
-        $result = errorResponse("Unknown mode", "Please specify one of the following query parameters: ip, domain");
+        return errorResponse("Unknown mode", "Please specify one of the following query parameters: ip, domain");
     }
-
-    $context["renderer"]($result);
 };
 
