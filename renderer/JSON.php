@@ -1,5 +1,6 @@
 <?php
 
 return function($data) {
-    echo json_encode($data);
+    header("Content-Type: application/json");
+    echo json_encode($data, JSON_PRETTY_PRINT);
 };

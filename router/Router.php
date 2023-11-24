@@ -1,6 +1,7 @@
 <?php
 
 require_once(ROOT . "/utils/arrays.php");
+require_once(ROOT . "/utils/error.php");
 
 const GET = "GET";
 const POST = "POST";
@@ -18,7 +19,7 @@ class Router {
 
     function __construct() {
         $this->notFoundHandler = function($context) {
-            header("HTTP/", true, 404);
+            setStatusCode(404);
             require(ROOT . "/templates/404.php");
         };
     }
