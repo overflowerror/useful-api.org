@@ -110,7 +110,7 @@ return function (array $context) {
         $result = whoisDomain($domain);
     } else {
         setStatusCode(400);
-        $result = errorResponse("Unknown mode", "Please specify one of the following query parameters: ip");
+        $result = errorResponse("Unknown mode", "Please specify one of the following query parameters: ip, domain");
     }
 
     $context["renderer"]($result);
