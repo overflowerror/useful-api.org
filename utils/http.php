@@ -7,6 +7,10 @@ function request(string $method, string $url, string $body = null, array $header
     curl_setopt($curlResource, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curlResource, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($curlResource, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($curlResource, CURLOPT_TIMEOUT, 10);
+    curl_setopt($curlResource, CURLOPT_FAILONERROR, true);
+
+    curl_setopt($curlResource, CURLOPT_VERBOSE, true);
 
     if ($body)
         curl_setopt($curlResource, CURLOPT_POSTFIELDS, $body);
@@ -19,7 +23,13 @@ function request(string $method, string $url, string $body = null, array $header
         curl_setopt($curlResource, CURLOPT_HTTPHEADER, $headers);
     }
 
-    $result = curl_exec($curlResource);
+    $body = curl_exec($curlResource);
+    $result = [
+        "body" => $body,
+        "isError" => curl_errno($curlResource),
+        "error" => curl_error($curlResource),
+        "status" => curl_getinfo($curlResource, CURLINFO_RESPONSE_CODE),
+    ];
 
     curl_close($curlResource);
 
