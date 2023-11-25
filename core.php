@@ -10,9 +10,16 @@ if (MAINTENANCE_MODE) {
     $connection = require_once(ROOT . "/persistence/connection.php");
     (require(ROOT . "/persistence/migrate.php"))($connection);
 
+    $repositories = (require_once(ROOT . "/persistence/Repositories.php"))($connection);
+
     $router = require(ROOT . "/router/Router.php");
     (require(ROOT . "/controllers/routes.php"))($router);
-    $router->execute([
-        "DB_CONNECTION" => $connection,
-    ]);
+
+    require_once(ROOT . "/context.php");
+    $context = [
+        DB_CONNECTION => $connection,
+        REPOSITORIES => $repositories,
+    ];
+
+    $router->execute($context);
 }

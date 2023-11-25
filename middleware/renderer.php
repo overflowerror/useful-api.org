@@ -7,7 +7,7 @@ function useRenderer($handler, string $default = "JSON", string $query_param = "
         $rendererMap = require(ROOT . "/renderer/renderer.php");
 
         $renderer = $rendererMap[strtoupper($_GET[$query_param] ?? "")] ?? $rendererMap[$default];
-        $context["renderer"] = $renderer;
+        $context[RENDERER] = $renderer;
 
         $result = $handler($context);
         if ($result !== null) {
