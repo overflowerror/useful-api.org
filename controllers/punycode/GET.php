@@ -2,7 +2,7 @@
 
 require_once(ROOT . "/utils/error.php");
 
-return function (array $context) {
+return function (array &$context) {
     if (key_exists("to", $_GET)) {
         return idn_to_ascii($_GET["to"]);
     } elseif (key_exists("from", $_GET)) {

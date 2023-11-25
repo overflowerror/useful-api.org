@@ -93,8 +93,9 @@ function whoisDomain(string $domain) {
     ];
 }
 
-return function (array $context) {
+return function (array &$context) {
     if (key_exists("ip", $_GET)) {
+        $context["endpoint"] = "whois/ip";
         $ip = $_GET["ip"];
 
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
@@ -104,6 +105,7 @@ return function (array $context) {
             return whoisIp($ip);
         }
     } elseif (key_exists("domain", $_GET)) {
+        $context["endpoint"] = "whois/domain";
         $domain = $_GET["domain"];
 
         return whoisDomain($domain);

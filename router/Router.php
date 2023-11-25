@@ -15,13 +15,15 @@ const PATCH = "PATCH";
 
 class Router {
     private $routes = [];
+    private $prefix = "";
     public $notFoundHandler;
 
-    function __construct() {
-        $this->notFoundHandler = function($context) {
+    function __construct(string $prefix = "") {
+        $this->notFoundHandler = function(array &$context) {
             setStatusCode(404);
             require(ROOT . "/templates/404.php");
         };
+        $this->prefix = $prefix;
     }
 
     private function findRoute(string $method, string $url) {
@@ -52,8 +54,10 @@ class Router {
         array_get_or_add($method, $this->routes, [])[$path] = $handler;
     }
 
-    public function execute($context = []) {
+    public function execute(array &$context = []) {
         $path = $this->getPath($_SERVER["REQUEST_URI"]);
+        $path = substr($path, strlen($this->prefix));
+
         $route = $this->findRoute($_SERVER["REQUEST_METHOD"], $path);
 
         if (!$route) {
@@ -66,8 +70,8 @@ class Router {
     }
 
     // calling magic to make the router a handler and thus cascade-able
-    public function __call(string $name, array $arguments) {
-        return $this->execute($arguments[0] ?? []);
+    public function __invoke(array &$context = []) {
+        return $this->execute($context);
     }
 }
 
