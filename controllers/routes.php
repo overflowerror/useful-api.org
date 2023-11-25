@@ -4,11 +4,12 @@ require_once(ROOT . "/router/Router.php");
 
 require_once(ROOT . "/middleware/renderer.php");
 require_once(ROOT . "/middleware/log.php");
+require_once(ROOT . "/middleware/ratelimit.php");
 
 function fromController(string $path, string $endpoint = null) {
     return function(array &$context) use ($path, $endpoint) {
         if ($endpoint)
-            $context["endpoint"] = $endpoint;
+            $context[ENDPOINT] = $endpoint;
 
         return (require(ROOT . "/controllers/" . $path . ".php"))($context);
     };
@@ -27,7 +28,15 @@ return function(Router $router) {
         fromController("/ipaddress/GET", "ipaddress")
     );
     $apiRouter->addRoute(GET, "/whois",
-        fromController("/whois/GET", "whois")
+        useRateLimit(
+            fromController("/whois/GET", "whois"),
+            [
+                RATELIMIT_ENDPOINT => "whois",
+                RATELIMIT_AMOUNT_PER_IP => 1,
+                RATELIMIT_AMOUNT_PER_KEY => 10,
+                RATELIMIT_TIMEFRAME => 60,
+            ]
+        )
     );
 
     $apiRouter->addRoute(GET, "/punycode",
